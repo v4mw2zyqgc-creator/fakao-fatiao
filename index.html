@@ -129,10 +129,9 @@
   .tree-node { user-select: none; }
   .tree-row {
     display: flex;
-    align-items: center;
-    padding: 4px 8px;
+    align-items: flex-start;
+    padding: 5px 8px;
     cursor: pointer;
-    white-space: nowrap;
   }
   .tree-row:hover { background: #f5f5f5; }
   .tree-row.active { background: #e8f0fe; }
@@ -142,6 +141,7 @@
     flex-shrink: 0;
     color: #999;
     font-size: 10px;
+    padding-top: 3px;
     transition: transform .1s;
   }
   .tree-row .arrow.expanded { transform: rotate(90deg); }
@@ -155,10 +155,13 @@
     font-size: 13px;
     line-height: 16px;
     text-align: center;
+    padding-top: 1px;
   }
   .tree-row .node-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.5;
+    flex: 1;
   }
   .tree-children { padding-left: 18px; display: none; }
   .tree-children.open { display: block; }
@@ -353,8 +356,7 @@ window.LAWS = [{"id":1080,"name":"宪法","laws":[{"id":1081,"title":"中华人�
 
   function showLaw(law){
     pushHistory(law.id);
-    // 拼接该法规所有章节
-    let html = '';
+    let html = '<div class="law-title">' + esc(law.title) + '</div>';
     law.sections.forEach(sec => {
       html += renderSectionContent(law, sec);
     });
@@ -364,7 +366,10 @@ window.LAWS = [{"id":1080,"name":"宪法","laws":[{"id":1081,"title":"中华人�
 
   function showSection(law, sec){
     pushHistory(law.id);
-    renderContent(renderSectionContent(law, sec));
+    let html = '<div class="law-title">' + esc(law.title) + '</div>';
+    if (sec.title) html += '<div class="chapter-title">' + esc(sec.title) + '</div>';
+    html += renderSectionContent(law, sec);
+    renderContent(html);
     contentEl.scrollTop = 0;
   }
 
@@ -489,7 +494,7 @@ window.LAWS = [{"id":1080,"name":"宪法","laws":[{"id":1081,"title":"中华人�
     if (!dragging) return;
     const winRect = $('win').getBoundingClientRect();
     let w = e.clientX - winRect.left - 4;
-    w = Math.max(180, Math.min(560, w));
+    w = Math.max(180, Math.min(720, w));
     $('sidebar').style.width = w + 'px';
   });
   document.addEventListener('mouseup', () => {
